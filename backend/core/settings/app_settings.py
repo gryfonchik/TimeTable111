@@ -34,7 +34,8 @@ class AppSettings(BaseAppSettings):
     loggers: tuple[str, str] = ("uvicorn.asgi", "uvicorn.access")
 
     installed_apps = [
-        "backend.bell"
+        "backend.bell",
+        "backend.week"
     ]
 
     models = []
