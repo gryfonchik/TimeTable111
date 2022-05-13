@@ -39,7 +39,8 @@ class AppSettings(BaseAppSettings):
         "backend.classroom",
         "backend.teacher",
         "backend.course",
-        "backend.course_teacher"
+        "backend.course_teacher",
+        "backend.group"
     ]
 
     models = []
