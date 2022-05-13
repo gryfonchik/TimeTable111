@@ -38,7 +38,8 @@ class AppSettings(BaseAppSettings):
         "backend.week",
         "backend.classroom",
         "backend.teacher",
-        "backend.course"
+        "backend.course",
+        "backend.course_teacher"
     ]
 
     models = []

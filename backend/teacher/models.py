@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
 
+from backend.course_teacher.models import course_teacher_table
 from backend.core.database import Base
 
 
@@ -9,7 +10,9 @@ class Teacher(Base):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     middle_name = Column(String, nullable=False)
+    courses = relationship("Course", secondary=course_teacher_table,
+                           back_populates="teachers")
 
-    @hybrid_property
+    @property
     def full_name(self):
         return f"{self.last_name} {self.first_name} {self.middle_name}"

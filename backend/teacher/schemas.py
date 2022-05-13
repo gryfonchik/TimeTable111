@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from backend.course.schemas import CoursePydantic
+
 
 class TeacherBasePydantic(BaseModel):
     label: str
@@ -10,6 +12,10 @@ class TeacherPydantic(TeacherBasePydantic):
 
     class Config:
         orm_mode = True
+
+
+class TeacherWithCourses(TeacherPydantic):
+    courses: CoursePydantic
 
 
 class TeacherInCreatePydantic(TeacherBasePydantic):
