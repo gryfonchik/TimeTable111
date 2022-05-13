@@ -22,21 +22,6 @@ class BaseRepository(Generic[Model, Schema, CreateSchema, UpdateSchema], metacla
     def _model(self) -> Type[Model]:
         ...
 
-    @property
-    @abc.abstractmethod
-    def _create_schema(self) -> Type[CreateSchema]:
-        ...
-
-    @property
-    @abc.abstractmethod
-    def _update_schema(self) -> Type[UpdateSchema]:
-        ...
-
-    @property
-    @abc.abstractmethod
-    def _schema(self) -> Type[Schema]:
-        ...
-
     def __init__(self, session: AsyncSession):
         self.session = session
 
