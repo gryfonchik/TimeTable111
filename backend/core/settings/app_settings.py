@@ -35,7 +35,8 @@ class AppSettings(BaseAppSettings):
 
     installed_apps = [
         "backend.bell",
-        "backend.week"
+        "backend.week",
+        "backend.classroom"
     ]
 
     models = []
