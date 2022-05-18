@@ -22,15 +22,6 @@ async def get_bells(
     )
 
 
-@router.post("/bell")
-async def create_bell(
-    bell_in: BellInCreatePydantic,
-    rep: BellRepository = Depends(get_repository)
-):
-    bell = await rep.create(bell_in)
-    return bell
-
-
 @router.get("/bell/{item_id}", response_model=BellPydantic)
 async def get_bell(
     item_id: int,
@@ -40,14 +31,3 @@ async def get_bell(
     if not obj:
         raise NotFoundException
     return obj
-
-
-@router.put("/bell/{item_id}", response_model=BellPydantic)
-async def put_bell(
-    item_id: int,
-    bell_in: BellInUpdatePydantic,
-    rep: BellRepository = Depends(get_repository)
-):
-    bell = await rep.get_by_id(item_id)
-    await rep.update(bell, bell_in)
-    return bell
