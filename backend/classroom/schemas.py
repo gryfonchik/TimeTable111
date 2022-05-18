@@ -2,7 +2,8 @@ from pydantic import BaseModel
 
 
 class ClassroomBasePydantic(BaseModel):
-    label: str
+    number: str
+    capacity: int
 
 
 class ClassroomPydantic(ClassroomBasePydantic):
