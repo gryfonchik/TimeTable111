@@ -4,7 +4,7 @@ from backend.course.schemas import CoursePydantic
 
 
 class TeacherBasePydantic(BaseModel):
-    label: str
+    full_name: str
 
 
 class TeacherPydantic(TeacherBasePydantic):
