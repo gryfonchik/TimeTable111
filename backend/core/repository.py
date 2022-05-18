@@ -5,6 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql import selectable
 
 from backend.core.database import Base
 from backend.core.schemas import PaginationPydantic
@@ -25,6 +26,9 @@ class BaseRepository(Generic[Model, Schema, CreateSchema, UpdateSchema], metacla
     def __init__(self, session: AsyncSession):
         self.session = session
 
+    async def get_query(self) -> selectable:
+        return select(self._model)
+
     async def create(self, schema_in: CreateSchema, commit: bool = True) -> Model:
         db_obj = self._model(**schema_in.dict())  # noqa
         self.session.add(db_obj)
@@ -34,12 +38,12 @@ class BaseRepository(Generic[Model, Schema, CreateSchema, UpdateSchema], metacla
         return db_obj
 
     async def get_by_id(self, obj_id: int) -> Model:
-        q = await self.session.execute(select(self._model).filter(self._model.id == obj_id))
+        q = await self.session.execute(self.get_query().filter(self._model.id == obj_id))
         return q.scalars().first()
 
     async def get_multi(self, pagination: PaginationPydantic | None = None) -> list[Model]:
         if pagination:
-            q = await self.session.execute(select(self._model).limit(pagination.limit).offset(pagination.offset))
+            q = await self.session.execute(self.get_query().limit(pagination.limit).offset(pagination.offset))
         else:
             q = await self.session.execute(select(self._model))
         return q.scalars().all()
