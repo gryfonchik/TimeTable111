@@ -26,7 +26,7 @@ class BaseRepository(Generic[Model, Schema, CreateSchema, UpdateSchema], metacla
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_query(self) -> selectable:
+    def get_query(self) -> selectable:
         return select(self._model)
 
     async def create(self, schema_in: CreateSchema, commit: bool = True) -> Model:
