@@ -22,7 +22,7 @@ class ScheduleItemRepository(
         return models.ScheduleItem
 
     def get_query(self) -> selectable:
-        return select(models.ScheduleItem).options(  # noqa
+        return select(self._model).options(  # noqa
             selectinload(models.ScheduleItem.course),
             selectinload(models.ScheduleItem.teacher),
             selectinload(models.ScheduleItem.bell),
