@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.bell import api as bell
+from backend.schedule_item import api as schedule_item
 from backend.core.settings import settings
 
 settings.configure_logging()
@@ -24,3 +25,4 @@ async def startup_event():
 
 
 app.include_router(bell.router)
+app.include_router(schedule_item.router)
