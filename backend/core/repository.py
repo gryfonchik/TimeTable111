@@ -45,7 +45,7 @@ class BaseRepository(Generic[Model, Schema, CreateSchema, UpdateSchema], metacla
         if pagination:
             q = await self.session.execute(self.get_query().limit(pagination.limit).offset(pagination.offset))
         else:
-            q = await self.session.execute(select(self._model))
+            q = await self.session.execute(self.get_query())
         return q.scalars().all()
 
     async def update(self, obj: Model, obj_in: UpdateSchema, commit: bool = True) -> Model:
