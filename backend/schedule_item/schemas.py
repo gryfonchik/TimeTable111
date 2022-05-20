@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 from pydantic import BaseModel
 
@@ -17,6 +17,7 @@ class ScheduleItemBasePydantic(BaseModel):
 
 class ScheduleItemPydantic(ScheduleItemBasePydantic):
     id: int
+    date: date
     course: CoursePydantic
     teacher: TeacherPydantic
     bell: BellPydantic
@@ -44,5 +45,5 @@ class ScheduleItemFilterPydantic(BaseModel):
     group_id: int | None
     subgroup_id: int | None
     teacher_id: int | None
-    date_beg: datetime | None
-    date_end: datetime | None
+    date_beg: date | None
+    date_end: date | None

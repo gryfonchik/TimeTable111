@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 from fastapi import Depends
 
@@ -15,8 +15,8 @@ def get_filter(
     group_id: int | None = None,
     subgroup_id: int | None = None,
     teacher_id: int | None = None,
-    date_beg: datetime | None = None,
-    date_end: datetime | None = None,
+    date_beg: date | None = None,
+    date_end: date | None = None,
 ):
     return ScheduleItemFilterPydantic(
         classroom_id=classroom_id,
