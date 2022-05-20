@@ -22,5 +22,5 @@ class ListPydantic(GenericModel, Generic[DataT]):
 
     @root_validator
     def compute_count(cls, values) -> dict: # noqa
-        values["count"] = len(values["items"])
+        values["count"] = len(values.get("items") if "items" in values else [])
         return values
