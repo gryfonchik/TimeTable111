@@ -22,13 +22,12 @@ class GroupInUpdatePydantic(GroupBasePydantic):
 
 
 class SubgroupBasePydantic(BaseModel):
-    label: str
     count: int
 
 
 class SubgroupPydantic(SubgroupBasePydantic):
     id: int
-    group_id: int
+    group: GroupPydantic
 
     class Config:
         orm_mode = True
