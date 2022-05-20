@@ -95,7 +95,6 @@ class RouterGenerator(Generic[T], APIRouter):
             items = await rep.get_multi(pagination)
             return {
                 "items": items,
-                "count": len(items)
             }
 
         async def get_all_endpoint_without_pagination(
@@ -104,7 +103,6 @@ class RouterGenerator(Generic[T], APIRouter):
             items = await rep.get_multi()
             return {
                 "items": items,
-                "count": len(items)
             }
 
         if self.pagination is None:
