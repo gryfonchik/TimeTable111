@@ -21,11 +21,6 @@ class GroupInUpdatePydantic(GroupBasePydantic):
     pass
 
 
-class GroupListPydantic(BaseModel):
-    groups: list[GroupPydantic]
-    count: int
-
-
 class SubgroupBasePydantic(BaseModel):
     label: str
     count: str
@@ -45,8 +40,3 @@ class SubgroupInCreatePydantic(SubgroupBasePydantic):
 
 class SubgroupInUpdatePydantic(SubgroupBasePydantic):
     pass
-
-
-class SubgroupListPydantic(BaseModel):
-    subgroups: list[GroupPydantic]
-    count: int

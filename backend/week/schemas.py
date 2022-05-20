@@ -18,8 +18,3 @@ class WeekInCreatePydantic(WeekBasePydantic):
 
 class WeekInUpdatePydantic(WeekBasePydantic):
     pass
-
-
-class WeekListPydantic(BaseModel):
-    weeks: list[WeekPydantic]
-    count: int

@@ -18,8 +18,3 @@ class CourseInCreatePydantic(CourseBasePydantic):
 
 class CourseInUpdatePydantic(CourseBasePydantic):
     pass
-
-
-class CourseListPydantic(BaseModel):
-    teachers: list[CoursePydantic]
-    count: int

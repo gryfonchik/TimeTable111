@@ -19,8 +19,3 @@ class ClassroomInCreatePydantic(ClassroomBasePydantic):
 
 class ClassroomInUpdatePydantic(ClassroomBasePydantic):
     pass
-
-
-class ClassroomListPydantic(BaseModel):
-    classrooms: list[ClassroomPydantic]
-    count: int

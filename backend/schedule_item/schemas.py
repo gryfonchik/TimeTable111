@@ -34,8 +34,3 @@ class ScheduleItemInCreatePydantic(ScheduleItemBasePydantic):
 
 class ScheduleItemInUpdatePydantic(ScheduleItemBasePydantic):
     pass
-
-
-class ScheduleItemListPydantic(BaseModel):
-    schedule_items: list[ScheduleItemPydantic]
-    count: int
