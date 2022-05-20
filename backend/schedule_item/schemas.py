@@ -47,3 +47,4 @@ class ScheduleItemFilterPydantic(BaseModel):
     teacher_id: int | None
     date_beg: date | None
     date_end: date | None
+    week_number: int | None

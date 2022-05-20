@@ -17,6 +17,7 @@ def get_filter(
     teacher_id: int | None = None,
     date_beg: date | None = None,
     date_end: date | None = None,
+    week_number: int | None = None
 ):
     return ScheduleItemFilterPydantic(
         classroom_id=classroom_id,
@@ -25,7 +26,8 @@ def get_filter(
         subgroup_id=subgroup_id,
         teacher_id=teacher_id,
         date_beg=date_beg,
-        date_end=date_end
+        date_end=date_end,
+        week_number=week_number
     )
 
 

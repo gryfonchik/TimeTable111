@@ -1,6 +1,6 @@
 from typing import Type
 
-from sqlalchemy import select
+from sqlalchemy import select, extract
 from sqlalchemy.orm import selectinload
 from sqlalchemy.sql import selectable
 
@@ -61,6 +61,9 @@ class ScheduleItemRepository(
 
         if filter_in.date_end:
             q = q.filter(self._model.date <= filter_in.date_end)
+
+        if filter_in.week_number:
+            q = q.filter(extract('week', self._model.date) == filter_in.week_number)
 
         objs = await self.session.execute(q)
         return objs.scalars().all()
