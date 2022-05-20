@@ -6,6 +6,7 @@ from backend.schedule_item import api as schedule_item
 from backend.classroom import api as classroom
 from backend.course import api as course
 from backend.group import api as group
+from backend.teacher import api as teacher
 from backend.core.settings import settings
 
 settings.configure_logging()
@@ -31,4 +32,5 @@ app.include_router(bell.router)
 app.include_router(classroom.router)
 app.include_router(course.router)
 app.include_router(group.router)
+app.include_router(teacher.router)
 app.include_router(schedule_item.router)
