@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class GroupBasePydantic(BaseModel): # noqa
     label: str
-    count: str
+    count: int
 
 
 class GroupPydantic(GroupBasePydantic):
@@ -23,7 +23,7 @@ class GroupInUpdatePydantic(GroupBasePydantic):
 
 class SubgroupBasePydantic(BaseModel):
     label: str
-    count: str
+    count: int
 
 
 class SubgroupPydantic(SubgroupBasePydantic):
