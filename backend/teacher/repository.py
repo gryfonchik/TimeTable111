@@ -22,10 +22,11 @@ class TeacherRepository(
         return models.Teacher
 
     async def get_by_course(self, filter_in: TeacherFilterPydantic):
-        q = select(self._model)
+        q = select(self._model) # noqa
         if filter_in.course_id:
             q = q. \
                 join(course_teacher_table). \
-                filter(course_teacher_table.columns.course_id == filter_in.course_id)
+                filter(course_teacher_table.columns.course_id == filter_in.course_id) # noqa
+
         objs = await self.session.execute(q)
         return objs.scalars().all()
