@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey, Date
 from sqlalchemy.orm import relationship
 
 from backend.bell.models import Bell
@@ -15,6 +15,7 @@ class ScheduleItem(Base):
     __tablename__ = "schedule_item"
 
     id = Column(Integer, primary_key=True)
+    date = Column(Date, nullable=False)
     course_id = Column(Integer, ForeignKey(Course.id), nullable=False)
     course = relationship("Course")
     teacher_id = Column(Integer, ForeignKey(Teacher.id), nullable=False)
@@ -30,4 +31,4 @@ class ScheduleItem(Base):
     subgroup_id = Column(Integer, ForeignKey(Subgroup.id), nullable=True)
     subgroup = relationship("Subgroup")
     type_schedule_item_id = Column(Integer, ForeignKey(TypeScheduleItem.id), nullable=True)
-    type_schedule_item= relationship("TypeScheduleItem")
+    type_schedule_item = relationship("TypeScheduleItem")
