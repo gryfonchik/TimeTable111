@@ -19,3 +19,8 @@ class ClassroomInCreatePydantic(ClassroomBasePydantic):
 
 class ClassroomInUpdatePydantic(ClassroomBasePydantic):
     pass
+
+
+class ClassroomFilterPydantic(BaseModel):
+    group_id: int | None
+    subgroup_id: int | None
