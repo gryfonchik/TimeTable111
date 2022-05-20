@@ -19,8 +19,3 @@ class BellInCreatePydantic(BellBasePydantic):
 
 class BellInUpdatePydantic(BellBasePydantic):
     pass
-
-
-class BellListPydantic(BaseModel):
-    bells: list[BellPydantic]
-    count: int
