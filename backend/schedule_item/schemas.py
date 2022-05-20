@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 from backend.bell.schemas import BellPydantic
@@ -34,3 +36,13 @@ class ScheduleItemInCreatePydantic(ScheduleItemBasePydantic):
 
 class ScheduleItemInUpdatePydantic(ScheduleItemBasePydantic):
     pass
+
+
+class ScheduleItemFilterPydantic(BaseModel):
+    classroom_id: int | None
+    course_id: int | None
+    group_id: int | None
+    subgroup_id: int | None
+    teacher_id: int | None
+    date_beg: datetime | None
+    date_end: datetime | None
