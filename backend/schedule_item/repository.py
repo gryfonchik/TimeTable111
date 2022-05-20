@@ -56,5 +56,11 @@ class ScheduleItemRepository(
         if filter_in.teacher_id:
             q = q.join(Teacher).filter(Teacher.id == filter_in.teacher_id)
 
+        if filter_in.date_beg:
+            q = q.filter(self._model.date >= filter_in.date_beg)
+
+        if filter_in.date_end:
+            q = q.filter(self._model.date <= filter_in.date_end)
+
         objs = await self.session.execute(q)
         return objs.scalars().all()
