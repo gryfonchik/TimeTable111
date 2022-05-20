@@ -1,12 +1,13 @@
 from datetime import date
 
-from fastapi import Depends
+from fastapi import Depends, HTTPException, status
 
+from backend.core.exceptions import NotFoundException
 from backend.core.router_generator import RouterGenerator
 from backend.core.schemas import ListPydantic
 from backend.schedule_item.dependencies import get_repository
-from backend.schedule_item.repository import ScheduleItemRepository
-from backend.schedule_item.schemas import ScheduleItemPydantic, ScheduleItemFilterPydantic
+from backend.schedule_item.repository import ScheduleItemRepository, CollisionException
+from backend.schedule_item.schemas import ScheduleItemPydantic, ScheduleItemFilterPydantic, ScheduleItemInUpdatePydantic
 
 
 def get_filter(
@@ -45,5 +46,23 @@ async def get_schedule_items(
     filter_in: ScheduleItemFilterPydantic = Depends(get_filter)
 ):
     return ListPydantic(
-        items=(await rep.get_filtered(filter_in))
+        items=(await rep.get_filtered(None, filter_in))
     )
+
+
+@router.put("/{item_id}")
+async def update_schedule_item(
+    item_id: int,
+    obj_in: ScheduleItemInUpdatePydantic,
+    rep: ScheduleItemRepository = Depends(get_repository)
+):
+    obj = await rep.get_by_id(item_id)
+    if not obj:
+        raise NotFoundException
+    try:
+        return await rep.update(obj, obj_in)
+    except CollisionException as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=e.__class__.__name__
+        )

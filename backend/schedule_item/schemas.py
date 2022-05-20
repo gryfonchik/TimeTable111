@@ -12,12 +12,11 @@ from backend.week.schemas import WeekPydantic
 
 
 class ScheduleItemBasePydantic(BaseModel):
-    pass
+    date: date
 
 
 class ScheduleItemPydantic(ScheduleItemBasePydantic):
     id: int
-    date: date
     course: CoursePydantic
     teacher: TeacherPydantic
     bell: BellPydantic
@@ -32,11 +31,23 @@ class ScheduleItemPydantic(ScheduleItemBasePydantic):
 
 
 class ScheduleItemInCreatePydantic(ScheduleItemBasePydantic):
-    pass
+    course_id: int
+    teacher_id: int
+    bell_id: int
+    group_id: int
+    subgroup: int
+    type_schedule_item_id: int
+    classroom_id: int
 
 
 class ScheduleItemInUpdatePydantic(ScheduleItemBasePydantic):
-    pass
+    course_id: int | None
+    teacher_id: int | None
+    bell_id: int | None
+    group_id: int | None
+    subgroup_id: int | None
+    type_schedule_item_id: int | None
+    classroom_id: int | None
 
 
 class ScheduleItemFilterPydantic(BaseModel):
