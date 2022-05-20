@@ -24,3 +24,7 @@ class TeacherInCreatePydantic(TeacherBasePydantic):
 
 class TeacherInUpdatePydantic(TeacherBasePydantic):
     pass
+
+
+class TeacherFilterPydantic(BaseModel):
+    course_id: int | None
