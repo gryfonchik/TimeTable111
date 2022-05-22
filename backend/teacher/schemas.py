@@ -4,11 +4,14 @@ from backend.course.schemas import CoursePydantic
 
 
 class TeacherBasePydantic(BaseModel):
-    full_name: str
+    first_name: str
+    last_name: str
+    middle_name: str
 
 
-class TeacherPydantic(TeacherBasePydantic):
+class TeacherPydantic(BaseModel):
     id: int
+    full_name: str
 
     class Config:
         orm_mode = True

@@ -34,7 +34,7 @@ class SubgroupPydantic(SubgroupBasePydantic):
 
 
 class SubgroupInCreatePydantic(SubgroupBasePydantic):
-    pass
+    group_id: int
 
 
 class SubgroupInUpdatePydantic(SubgroupBasePydantic):

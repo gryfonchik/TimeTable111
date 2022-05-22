@@ -10,7 +10,7 @@ class TeacherWish(Base):
     __tablename__ = "teacher_wish"
 
     id = Column(Integer, primary_key=True)
-    teacher_id = Column(Integer, ForeignKey(Teacher.id), nullable=False)
-    bell_id = Column(Integer, ForeignKey(Bell.id), nullable=False)
-    week_id = Column(Integer, ForeignKey(Week.id), nullable=False)
+    teacher_id = Column(Integer, ForeignKey(Teacher.id, ondelete="CASCADE"), nullable=False)
+    bell_id = Column(Integer, ForeignKey(Bell.id, ondelete="CASCADE"), nullable=False)
+    week_id = Column(Integer, ForeignKey(Week.id, ondelete="CASCADE"), nullable=False)
     day_of_week = Column(Integer)

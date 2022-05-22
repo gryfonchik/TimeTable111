@@ -34,7 +34,7 @@ class BaseRepository(Generic[Model, Schema, CreateSchema, UpdateSchema], metacla
         self.session.add(db_obj)
         if commit:
             await self.session.commit()
-        await self.session.refresh(db_obj)
+            await self.session.refresh(db_obj)
         return db_obj
 
     async def get_by_id(self, obj_id: int) -> Model:
