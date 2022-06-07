@@ -35,9 +35,10 @@ class ScheduleItemInCreatePydantic(ScheduleItemBasePydantic):
     teacher_id: int
     bell_id: int
     group_id: int
-    subgroup: int
+    subgroup_id: int | None
     type_schedule_item_id: int
     classroom_id: int
+    week_id: int
 
 
 class ScheduleItemInUpdatePydantic(ScheduleItemBasePydantic):
