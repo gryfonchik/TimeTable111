@@ -9,4 +9,5 @@ class Course(Base):
     id = Column(Integer, primary_key=True)
     label = Column(String, nullable=False)
     teachers = relationship("Teacher", secondary=course_teacher_table,
+                            uselist=True,
                             back_populates="courses")
