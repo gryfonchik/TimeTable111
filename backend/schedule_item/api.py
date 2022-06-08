@@ -2,34 +2,28 @@ from datetime import date
 
 from fastapi import Depends, HTTPException, status
 
+from backend.bell.repository import BellRepository
 from backend.core.exceptions import NotFoundException
 from backend.core.router_generator import RouterGenerator
 from backend.core.schemas import ListPydantic
 from backend.schedule_item.dependencies import get_repository
 from backend.schedule_item.repository import ScheduleItemRepository, CollisionException
 from backend.schedule_item.schemas import ScheduleItemPydantic, ScheduleItemFilterPydantic, ScheduleItemInUpdatePydantic
+from backend.bell.api import get_repository as get_bell_repository
 
 
 def get_filter(
-    classroom_id: int | None = None,
-    course_id: int | None = None,
+    year: int,
+    week_number: int,
     group_id: int | None = None,
-    subgroup_id: int | None = None,
     teacher_id: int | None = None,
-    date_beg: date | None = None,
-    date_end: date | None = None,
-    week_number: int | None = None
 ):
     return ScheduleItemFilterPydantic(
-        classroom_id=classroom_id,
-        course_id=course_id,
-        group_id=group_id,
-        subgroup_id=subgroup_id,
-        teacher_id=teacher_id,
-        date_beg=date_beg,
-        date_end=date_end,
-        week_number=week_number
-    )
+            group_id=group_id,
+            teacher_id=teacher_id,
+            year=year,
+            week_number=week_number
+        )
 
 
 router = RouterGenerator(
@@ -40,14 +34,25 @@ router = RouterGenerator(
 )
 
 
-@router.get("/", response_model=ListPydantic[ScheduleItemPydantic])
+@router.get("/")
 async def get_schedule_items(
     rep: ScheduleItemRepository = Depends(get_repository),
+    rep_bell: BellRepository = Depends(get_bell_repository),
     filter_in: ScheduleItemFilterPydantic = Depends(get_filter)
 ):
-    return ListPydantic(
-        items=(await rep.get_filtered(None, filter_in))
-    )
+    bells = {
+        item.time_beg: i + 1
+        for i, item in enumerate(await rep_bell.get_multi())
+    }
+    res = {
+        str(date.fromisocalendar(filter_in.year, filter_in.week_number, day_of_week)): {
+            int(bell): [] for bell in range(1, 9)
+        } for day_of_week in range(1, 7)
+    }
+    schedule_items = await rep.get_filtered(None, filter_in=filter_in)
+    for schedule_item in schedule_items:
+        res[str(schedule_item.date)][bells[schedule_item.bell.time_beg]].append(schedule_item)
+    return res
 
 
 @router.put("/{item_id}")

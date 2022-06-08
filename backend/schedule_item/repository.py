@@ -1,8 +1,9 @@
 from typing import Type
 
-from sqlalchemy import select, extract
+from sqlalchemy import select, extract, distinct, func
 from sqlalchemy.orm import selectinload
 from sqlalchemy.sql import selectable, or_
+from sqlalchemy.dialects.postgresql import array_agg
 
 from backend.bell.models import Bell
 from backend.classroom.models import Classroom
@@ -101,14 +102,9 @@ class ScheduleItemRepository(
             selectinload(models.ScheduleItem.week),
         )
 
-    async def get_filtered(self, pagination: PaginationPydantic | None, filter_in: ScheduleItemFilterPydantic):
+    async def get_filtered(self, pagination: PaginationPydantic | None, filter_in: ScheduleItemFilterPydantic
+                           ) -> list[models.ScheduleItem]:
         q = self.get_query()
-
-        if filter_in.classroom_id:
-            q = q.join(Classroom).filter(Classroom.id == filter_in.classroom_id)
-
-        if filter_in.course_id:
-            q = q.join(Course).filter(Course.id == filter_in.course_id)
 
         if filter_in.group_id:
             q = q.join(Group).join(Subgroup).filter(or_(
@@ -116,17 +112,8 @@ class ScheduleItemRepository(
                 Subgroup.group_id == filter_in.group_id
             ))
 
-        if filter_in.subgroup_id:
-            q = q.join(Subgroup).filter(Subgroup.id == filter_in.subgroup_id)
-
         if filter_in.teacher_id:
             q = q.join(Teacher).filter(Teacher.id == filter_in.teacher_id)
-
-        if filter_in.date_beg:
-            q = q.filter(self._model.date >= filter_in.date_beg)
-
-        if filter_in.date_end:
-            q = q.filter(self._model.date <= filter_in.date_end)
 
         if filter_in.week_number:
             q = q.filter(extract('week', self._model.date) == filter_in.week_number)

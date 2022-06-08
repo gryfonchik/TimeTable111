@@ -52,11 +52,7 @@ class ScheduleItemInUpdatePydantic(ScheduleItemBasePydantic):
 
 
 class ScheduleItemFilterPydantic(BaseModel):
-    classroom_id: int | None
-    course_id: int | None
     group_id: int | None
-    subgroup_id: int | None
     teacher_id: int | None
-    date_beg: date | None
-    date_end: date | None
-    week_number: int | None
+    year: int
+    week_number: int
