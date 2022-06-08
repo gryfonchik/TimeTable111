@@ -118,6 +118,9 @@ class ScheduleItemRepository(
         if filter_in.week_number:
             q = q.filter(extract('week', self._model.date) == filter_in.week_number)
 
+        if filter_in.year:
+            q = q.filter(extract('year', self._model.date) == filter_in.year)
+
         if pagination:
             q = q.offset(pagination.offset).limit(pagination.limit)
 
