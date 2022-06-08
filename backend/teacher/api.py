@@ -22,13 +22,3 @@ router = RouterGenerator(
     response_model=TeacherPydantic,
     pagination=None
 )
-
-
-@router.get("/", response_model=ListPydantic[TeacherPydantic])
-async def get_teachers(
-    rep: TeacherRepository = Depends(get_repository),
-    filter_in: TeacherFilterPydantic = Depends(get_filter)
-):
-    return ListPydantic[TeacherPydantic](
-        items=(await rep.get_by_course(filter_in))
-    )
