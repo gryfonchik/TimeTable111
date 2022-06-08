@@ -124,5 +124,7 @@ class ScheduleItemRepository(
         if pagination:
             q = q.offset(pagination.offset).limit(pagination.limit)
 
+        q = q.distinct()
+
         objs = await self.session.execute(q)
         return objs.scalars().all()
