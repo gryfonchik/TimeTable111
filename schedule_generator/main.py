@@ -77,15 +77,19 @@ async def division_into_subgroups(session, groups):
     rep = SubgroupRepository(session)
     for group in groups:
         sub_groups_count = group.count // 20
+        i = 0
         for _ in range(sub_groups_count):
             await rep.create(SubgroupInCreatePydantic(
                 group_id=group.id,
+                label=f"{i + 1}",
                 count=20
             ))
+            i += 1
         remaining_count = group.count - sub_groups_count * 20
         if remaining_count > 0:
             await rep.create(SubgroupInCreatePydantic(
                 group_id=group.id,
+                label=f"{i + 1}",
                 count=remaining_count
             ))
 
@@ -154,7 +158,7 @@ async def generate(session, teachers, bells, courses, groups, rooms, weeks, type
         group = groups[int(item["group_id"]) - 1]
         course = courses[int(item["course_id"]) - 1]
         teacher = teachers[int(item["teacher_id"]) - 1]
-        for i in range(get_number_of_classes_per_weeks(int(item["lecture_count"]) - 1)):
+        for i in range(get_number_of_classes_per_weeks(int(item["lecture_count"]))):
             schedule_items_prepared.append(ScheduleItemHuj(**{
                 "course_id": course.id,
                 "group_id": group.id,
@@ -163,7 +167,7 @@ async def generate(session, teachers, bells, courses, groups, rooms, weeks, type
                 "type_schedule_item_id": types_schedule_items[0].id,
                 "week": i % 2
             }))
-        for i in range(get_number_of_classes_per_weeks(int(item["practice_count"]) - 1)):
+        for i in range(get_number_of_classes_per_weeks(int(item["practice_count"]))):
             subgroups = await get_subgroups_of_group(group)
             for subgroup in subgroups:
                 schedule_items_prepared.append(ScheduleItemHuj(**{
@@ -174,7 +178,7 @@ async def generate(session, teachers, bells, courses, groups, rooms, weeks, type
                     "type_schedule_item_id": types_schedule_items[1].id,
                     "week": i % 2
                 }))
-        for i in range(get_number_of_classes_per_weeks(int(item["laboratory_count"]) - 1)):
+        for i in range(get_number_of_classes_per_weeks(int(item["laboratory_count"]))):
             subgroups = await get_subgroups_of_group(group)
             for subgroup in subgroups:
                 schedule_items_prepared.append(ScheduleItemHuj(**{
