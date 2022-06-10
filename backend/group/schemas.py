@@ -22,6 +22,7 @@ class GroupInUpdatePydantic(GroupBasePydantic):
 
 
 class SubgroupBasePydantic(BaseModel):
+    label: str
     count: int
 
 
