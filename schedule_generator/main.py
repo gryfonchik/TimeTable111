@@ -5,13 +5,13 @@ import datetime
 from pydantic import BaseModel
 from sqlalchemy import select
 
+from backend.course_teacher.models import course_teacher_table
 from backend.bell.repository import BellRepository
 from backend.bell.schemas import BellInCreatePydantic
 from backend.classroom.models import Classroom  # noqa
 from backend.classroom.repository import ClassroomRepository
 from backend.classroom.schemas import ClassroomInCreatePydantic
 from backend.core.database import async_session, Base
-from backend.core.schemas import ListPydantic
 from backend.course.repository import CourseRepository
 from backend.course.schemas import CourseInCreatePydantic
 from backend.group.models import Subgroup
@@ -51,8 +51,8 @@ async def create_from_csv(filename, session, rep_class, in_create_class):
 
 async def create_course_teacher_relation_from_csv(filename, session, courses, teachers):
     for row in get_rows_from_csv(filename):
-        course = courses[int(row['id_course']) - 1]
-        teacher = teachers[int(row['id_teacher']) - 1]
+        course = courses[int(row['course_id']) - 1]
+        teacher = teachers[int(row['teacher_id']) - 1]
         teacher.courses.append(course)
         session.add(teacher)
     await session.commit()
@@ -68,7 +68,7 @@ async def create_teacher_wishes_from_csv(filename, session, teachers, bells, wee
             teacher_id=teacher.id,
             bell_id=bell.id,
             week_id=week.id,
-            day_of_week=int(row['day_of_week'])
+            day_of_week=int(row['day_of_week']) - 1
         ), commit=True)
     await session.commit()
 
@@ -105,7 +105,7 @@ async def generate(session, teachers, bells, courses, groups, rooms, weeks, type
         return result
 
     def get_number_of_classes_per_weeks(a):
-        return a // WEEKS_COUNT
+        return a // 9
 
     async def get_subgroups_of_group(group):
         return (await session.execute(select(Subgroup).where(Subgroup.group_id == group.id))).scalars().all()
@@ -113,18 +113,22 @@ async def generate(session, teachers, bells, courses, groups, rooms, weeks, type
     async def can_it_be_added(timetable_day, bell_id, room_id, group_id, subgroup_id, teacher_id):
         group_conflict = []
         if group_id:
-            group_conflict = list(filter(lambda x: x.bell_id == bell_id and x.group_id == group_id, timetable_day))
+            group_conflict = list(filter(lambda x: x.bell_id == bell_id and x.group_id == group_id and x.subgroup_id == None, timetable_day))
         subgroup_conflict = []
         if subgroup_id:
-            subgroup_conflict = list(filter(lambda x: x.bell_id == bell_id and x.subgroup_id == subgroup_id, timetable_day))
+            subgroup_conflict = list(filter(lambda x: x.bell_id == bell_id and x.subgroup_id != None and x.subgroup_id == subgroup_id, timetable_day))
         teacher_conflict = list(filter(lambda x: x.bell_id == bell_id and x.teacher_id == teacher_id, timetable_day))
         room_conflict = list(filter(lambda x: x.bell_id == bell_id and x.classroom_id == room_id, timetable_day))
+        teacher_limit = len(list(filter(lambda x: x.teacher_id == teacher_id, timetable_day))) >= 5
+        group_limit = len(list(filter(lambda x: x.group_id == group_id, timetable_day))) >= 5
 
         return not (
             bool(group_conflict) or
             bool(subgroup_conflict) or
             bool(teacher_conflict) or
-            bool(room_conflict)
+            bool(room_conflict) or
+            teacher_limit or
+            group_limit
         )
 
     timetable = {
@@ -140,24 +144,26 @@ async def generate(session, teachers, bells, courses, groups, rooms, weeks, type
         teacher_id: int
         bell_id: int | None
         classroom_id: int | None
+        week: int | None
 
     schedule_items_prepared: list[ScheduleItemHuj] = []
 
     group_course = get_rows_from_csv("schedule_generator/input_data/group_course.csv")
 
     for item in group_course:
-        group = groups[int(item["group_id"])]
-        course = courses[int(item["course_id"])]
-        teacher = teachers[int(item["teacher_id"])]
-        for _ in range(get_number_of_classes_per_weeks(int(item["lecture_count"]))):
+        group = groups[int(item["group_id"]) - 1]
+        course = courses[int(item["course_id"]) - 1]
+        teacher = teachers[int(item["teacher_id"]) - 1]
+        for i in range(get_number_of_classes_per_weeks(int(item["lecture_count"]) - 1)):
             schedule_items_prepared.append(ScheduleItemHuj(**{
                 "course_id": course.id,
                 "group_id": group.id,
                 "teacher_id": teacher.id,
                 "subgroup_id": None,
-                "type_schedule_item_id": types_schedule_items[0].id
+                "type_schedule_item_id": types_schedule_items[0].id,
+                "week": i % 2
             }))
-        for _ in range(get_number_of_classes_per_weeks(int(item["practice_count"]))):
+        for i in range(get_number_of_classes_per_weeks(int(item["practice_count"]) - 1)):
             subgroups = await get_subgroups_of_group(group)
             for subgroup in subgroups:
                 schedule_items_prepared.append(ScheduleItemHuj(**{
@@ -165,9 +171,10 @@ async def generate(session, teachers, bells, courses, groups, rooms, weeks, type
                     "group_id": group.id,
                     "teacher_id": teacher.id,
                     "subgroup_id": subgroup.id,
-                    "type_schedule_item_id": types_schedule_items[1].id
+                    "type_schedule_item_id": types_schedule_items[1].id,
+                    "week": i % 2
                 }))
-        for _ in range(get_number_of_classes_per_weeks(int(item["laboratory_count"]))):
+        for i in range(get_number_of_classes_per_weeks(int(item["laboratory_count"]) - 1)):
             subgroups = await get_subgroups_of_group(group)
             for subgroup in subgroups:
                 schedule_items_prepared.append(ScheduleItemHuj(**{
@@ -175,37 +182,42 @@ async def generate(session, teachers, bells, courses, groups, rooms, weeks, type
                     "group_id": group.id,
                     "teacher_id": teacher.id,
                     "subgroup_id": subgroup.id,
-                    "type_schedule_item_id": types_schedule_items[2].id
+                    "type_schedule_item_id": types_schedule_items[2].id,
+                    "week": i % 2
                 }))
 
     for schedule_obj in schedule_items_prepared:
         added = False
-        for week in timetable.keys():
-            for bell in bells:
-                for day_of_week in timetable[week].keys():
-                    for room in rooms:
-                        if added:
-                            continue
-                        check = await can_it_be_added(
-                            timetable[week][day_of_week],
-                            bell.id,
-                            room.id,
-                            schedule_obj.group_id,
-                            schedule_obj.subgroup_id,
-                            schedule_obj.teacher_id,
-                        )
-                        if check:
-                            create_in = schedule_obj.dict()
-                            create_in['bell_id'] = bell.id
-                            create_in['classroom_id'] = room.id
-                            timetable[week][day_of_week].append(
-                                ScheduleItemHuj(
-                                   **create_in
-                                )
+        week = schedule_obj.week + 1
+        for bell in bells:
+            for day_of_week in timetable[week].keys():
+                for room in rooms:
+                    if added:
+                        continue
+                    check = await can_it_be_added(
+                        timetable[week][day_of_week],
+                        bell.id,
+                        room.id,
+                        schedule_obj.group_id,
+                        schedule_obj.subgroup_id,
+                        schedule_obj.teacher_id,
+                    )
+                    if check:
+                        create_in = schedule_obj.dict()
+                        create_in['bell_id'] = bell.id
+                        create_in['classroom_id'] = room.id
+                        timetable[week][day_of_week].append(
+                            ScheduleItemHuj(
+                               **create_in
                             )
-                            added = True
+                        )
+                        added = True
+        if not added:
+            print(f"FAILED ADD, {schedule_obj.course_id}")
+
     rep = ScheduleItemRepository(session)
     start_date = datetime.datetime.strptime("2022-09-12", "%Y-%m-%d")
+    start_week = 37
     for week in timetable.keys():
         for day_of_week in timetable[week].keys():
             for obj in timetable[week][day_of_week]:
@@ -213,7 +225,7 @@ async def generate(session, teachers, bells, courses, groups, rooms, weeks, type
                     start_date_ = start_date + datetime.timedelta(days=(14 * i))
                     create_in = obj.dict()
                     create_in["date"] = start_date_ + datetime.timedelta(days=day_of_week)
-                    create_in["date"] += datetime.timedelta(days=(7 * day_of_week))
+                    create_in["date"] += datetime.timedelta(days=(7 * (week - 1)))
                     create_in["week_id"] = weeks[week - 1].id
                     await rep.create(ScheduleItemInCreatePydantic(**create_in))
 
