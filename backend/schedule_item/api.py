@@ -34,7 +34,7 @@ router = RouterGenerator(
 )
 
 
-@router.get("/")
+@router.get("/", response_model=dict[str, dict[str, list[ScheduleItemPydantic]]])
 async def get_schedule_items(
     rep: ScheduleItemRepository = Depends(get_repository),
     rep_bell: BellRepository = Depends(get_bell_repository),
