@@ -1,10 +1,8 @@
 from typing import Type
 
 from sqlalchemy import select
-from sqlalchemy.orm import noload
 
 from backend.core.repository import BaseRepository
-from backend.course_teacher.models import course_teacher_table
 from backend.teacher import schemas, models
 from backend.teacher.schemas import TeacherFilterPydantic
 
@@ -26,8 +24,7 @@ class TeacherRepository(
         q = select(self._model)  # noqa
         if filter_in.course_id:
             q = q. \
-                join(course_teacher_table, course_teacher_table.columns.course_id == filter_in.course_id). \
-                options(noload(self._model.courses)) # noqa
+                filter(self._model.courses.any(id=filter_in.course_id))
 
         objs = await self.session.execute(q)
         return objs.scalars().all()

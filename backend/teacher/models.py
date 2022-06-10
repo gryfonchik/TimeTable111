@@ -11,8 +11,7 @@ class Teacher(Base):
     last_name = Column(String, nullable=False)
     middle_name = Column(String, nullable=False)
     courses = relationship("Course", secondary=course_teacher_table,
-                           lazy='joined',
-                           uselist=True,
+                           lazy="selectin",
                            back_populates="teachers")
 
     @property
