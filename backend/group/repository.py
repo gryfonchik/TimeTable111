@@ -5,6 +5,7 @@ from sqlalchemy.sql import selectable, select
 
 from backend.core.repository import BaseRepository
 from backend.group import schemas, models
+from backend.group.schemas import SubgroupFilterPydantic
 
 
 class GroupRepository(
@@ -38,3 +39,12 @@ class SubgroupRepository(
     @property
     def _model(self) -> Type[models.Subgroup]:
         return models.Subgroup
+
+    async def get_filtered(self, filter_in: SubgroupFilterPydantic):
+        q = self.get_query()
+
+        if filter_in.group_id:
+            q = q.join(models.Group).filter(models.Group.id == filter_in.group_id)
+
+        objs = await self.session.execute(q)
+        return objs.scalars().all()

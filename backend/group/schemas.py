@@ -39,3 +39,7 @@ class SubgroupInCreatePydantic(SubgroupBasePydantic):
 
 class SubgroupInUpdatePydantic(SubgroupBasePydantic):
     pass
+
+
+class SubgroupFilterPydantic(BaseModel):
+    group_id: int | None = None
