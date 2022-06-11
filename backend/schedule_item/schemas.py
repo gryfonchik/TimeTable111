@@ -39,6 +39,7 @@ class ScheduleItemInCreatePydantic(ScheduleItemBasePydantic):
     type_schedule_item_id: int
     classroom_id: int
     week_id: int
+    check_collision: bool = True
 
 
 class ScheduleItemInUpdatePydantic(ScheduleItemBasePydantic):
@@ -49,6 +50,7 @@ class ScheduleItemInUpdatePydantic(ScheduleItemBasePydantic):
     subgroup_id: int | None
     type_schedule_item_id: int | None
     classroom_id: int | None
+    check_collision: bool = True
 
 
 class ScheduleItemFilterPydantic(BaseModel):
