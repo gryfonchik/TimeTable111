@@ -190,6 +190,29 @@ async def generate(session, teachers, bells, courses, groups, rooms, weeks, type
                     "week": i % 2
                 }))
 
+    group_course_special = get_rows_from_csv("schedule_generator/input_data/group_course_special.csv")
+
+    for item in group_course_special:
+        group = groups[int(item["group_id"]) - 1]
+        course = courses[int(item["course_id"]) - 1]
+        teacher = teachers[int(item["teacher_id"]) - 1]
+        bell = bells[int(item["bell_id"]) - 1]
+        classroom = rooms[int(item["classroom_id"]) - 1]
+        type_schedule_items = types_schedule_items[1]
+        for i in range(get_number_of_classes_per_weeks(int(item["practice_count"]))):
+            timetable[(i + 1) % 2 + 1][int(item["day_of_week"])].append(
+                ScheduleItemHuj(
+                    course_id=course.id,
+                    group_id=group.id,
+                    subgroup_id=None,
+                    type_schedule_item_id=type_schedule_items.id,
+                    teacher_id=teacher.id,
+                    bell_id=bell.id,
+                    classroom_id=classroom.id,
+                    week=i % 2
+                )
+            )
+
     for schedule_obj in schedule_items_prepared:
         added = False
         week = schedule_obj.week + 1
