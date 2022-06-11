@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, Date
+from sqlalchemy import Column, Integer, ForeignKey, Date, Boolean
 from sqlalchemy.orm import relationship
 
 from backend.bell.models import Bell
@@ -32,3 +32,4 @@ class ScheduleItem(Base):
     subgroup = relationship("Subgroup")
     type_schedule_item_id = Column(Integer, ForeignKey(TypeScheduleItem.id, ondelete="CASCADE"), nullable=True)
     type_schedule_item = relationship("TypeScheduleItem")
+    check_collision = Column(Boolean, default=True, nullable=True)

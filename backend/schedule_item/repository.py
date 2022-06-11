@@ -55,38 +55,39 @@ class ScheduleItemRepository(
         obj_in: schemas.ScheduleItemInUpdatePydantic,
         commit: bool = True
     ) -> models.ScheduleItem:
-        query = self.get_query().join(Bell). \
-            filter(self._model.id != obj.id). \
-            filter(self._model.date == obj_in.date). \
-            filter(Bell.id == obj_in.bell_id)
+        if obj.check_collision:
+            query = self.get_query().join(Bell). \
+                filter(self._model.id != obj.id). \
+                filter(self._model.date == obj_in.date). \
+                filter(Bell.id == obj_in.bell_id)
 
-        if (
-            obj_in.teacher_id and
-            (await self.session.execute(query.join(Teacher).filter(Teacher.id == obj_in.teacher_id))).
-                scalars().first()
-        ):
-            raise CollisionTeacherException()
+            if (
+                obj_in.teacher_id and
+                (await self.session.execute(query.join(Teacher).filter(Teacher.id == obj_in.teacher_id))).
+                    scalars().first()
+            ):
+                raise CollisionTeacherException()
 
-        if (
-            obj_in.group_id and
-            (await self.session.execute(query.join(Group).filter(Group.id == obj_in.group_id))).
-                scalars().first()
-        ):
-            raise CollisionGroupException()
+            if (
+                obj_in.group_id and
+                (await self.session.execute(query.join(Group).filter(Group.id == obj_in.group_id))).
+                    scalars().first()
+            ):
+                raise CollisionGroupException()
 
-        if (
-            obj_in.subgroup_id and
-            (await self.session.execute(query.join(Subgroup).filter(Subgroup.id == obj_in.subgroup_id))).
-                scalars().first()
-        ):
-            raise CollisionSubgroupException()
+            if (
+                obj_in.subgroup_id and
+                (await self.session.execute(query.join(Subgroup).filter(Subgroup.id == obj_in.subgroup_id))).
+                    scalars().first()
+            ):
+                raise CollisionSubgroupException()
 
-        if (
-            obj_in.classroom_id and
-            (await self.session.execute(query.join(Classroom).filter(Classroom.id == obj_in.classroom_id))).
-                scalars().first()
-        ):
-            raise CollisionClassroomException()
+            if (
+                obj_in.classroom_id and
+                (await self.session.execute(query.join(Classroom).filter(Classroom.id == obj_in.classroom_id))).
+                    scalars().first()
+            ):
+                raise CollisionClassroomException()
 
         return await super().update(obj, obj_in)
 
