@@ -149,6 +149,7 @@ async def generate(session, teachers, bells, courses, groups, rooms, weeks, type
         bell_id: int | None
         classroom_id: int | None
         week: int | None
+        check_collision: bool = True
 
     schedule_items_prepared: list[ScheduleItemHuj] = []
 
@@ -209,7 +210,8 @@ async def generate(session, teachers, bells, courses, groups, rooms, weeks, type
                     teacher_id=teacher.id,
                     bell_id=bell.id,
                     classroom_id=classroom.id,
-                    week=i % 2
+                    week=i % 2,
+                    check_collision=False
                 )
             )
 
