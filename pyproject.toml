@@ -17,6 +17,7 @@ SQLAlchemy = "^1.4.36"
 alembic = "^1.7.7"
 fastapi-crudrouter = "^0.8.5"
 databases = "^0.5.5"
+Jinja2 = "^3.1.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"

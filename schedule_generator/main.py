@@ -220,7 +220,7 @@ async def generate(session, teachers, bells, courses, groups, rooms, weeks, type
         week = schedule_obj.week + 1
         for bell in bells:
             for day_of_week in timetable[week].keys():
-                for room in rooms:
+                for room in rooms[:-1]:
                     if added:
                         continue
                     check = await can_it_be_added(

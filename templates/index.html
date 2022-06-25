@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script>
+$.ajax({
+	url: '/bell',         /* Куда пойдет запрос */
+	method: 'get',             /* Метод передачи (post или get) */
+	dataType: 'json',          /* Тип данных в ответе (xml, json, script, html). */
+	success: function(data){   /* функция которая будет выполнена после успешного запроса.  */
+		console.log(data);
+	}
+});
+</script>
+</html>
